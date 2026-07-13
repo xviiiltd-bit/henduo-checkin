@@ -1,0 +1,4 @@
+{
+  "name": "fetch-events-by-date",
+  "entry": "index.ts"
+}

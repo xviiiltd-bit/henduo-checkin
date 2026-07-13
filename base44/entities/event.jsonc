@@ -46,6 +46,25 @@
       "type": "integer",
       "default": 100,
       "description": "Lower numbers appear first."
+    },
+    "source_id": {
+      "type": "string",
+      "description": "ID from the external event API, used to avoid duplicate imports."
+    },
+    "source_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date used when this event was fetched from the API."
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Original event URL from the external API."
+    },
+    "fetched_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the event was fetched."
     }
   },
   "required": [
