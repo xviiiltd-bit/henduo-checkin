@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useEffect } from "react";
-import { base44 } from "./base44Client";
 import { weeklyEvents, type RaveEvent } from "./events";
 
 type Base44Event = {
@@ -31,6 +30,7 @@ export default function Home() {
 
     async function loadEvents() {
       try {
+        const { base44 } = await import("./base44Client");
         const records = (await base44.entities.Event.filter(
           { is_published: true },
           "sort_order",
