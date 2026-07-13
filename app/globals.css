@@ -571,18 +571,136 @@ button.event-face {
 }
 
 @media (max-width: 640px) {
+  .site-frame {
+    padding: 12px;
+  }
+
   .events-header {
-    align-items: start;
-    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .events-header .system-kicker {
+    font-size: 0.58rem;
+    margin-bottom: 8px;
+  }
+
+  .events-header h2 {
+    font-size: clamp(1.22rem, 8vw, 2rem);
+    text-shadow:
+      0 2px 0 #7b4215,
+      0 0 12px rgb(255 198 64 / 0.34);
+  }
+
+  .events-shell {
+    min-height: calc(100svh - 24px);
+    padding-block: 22px 14px;
   }
 
   .event-grid {
-    grid-template-columns: 1fr;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: min(100%, 356px);
   }
 
   .event-card {
-    aspect-ratio: 1.12;
-    min-height: 276px;
+    aspect-ratio: 0.82;
+    min-height: 0;
+  }
+
+  .event-face {
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px #c7822b,
+      0 0 0 4px #ffe08a,
+      5px 5px 0 #120707,
+      0 0 16px rgb(var(--neon-rgb) / 0.2);
+    padding: 8px;
+  }
+
+  .event-tag {
+    font-size: 0.46rem;
+    margin-bottom: 6px;
+  }
+
+  .pixel-poster {
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px #ffc640,
+      inset 0 0 0 3px rgb(255 255 255 / 0.16),
+      inset -5px -5px 0 rgb(0 0 0 / 0.14);
+    margin: 0 4px 8px;
+  }
+
+  .pixel-poster.small {
+    margin-bottom: 8px;
+    width: min(84px, 62%);
+  }
+
+  .pixel-sun {
+    border-width: 2px;
+  }
+
+  .pixel-deck {
+    box-shadow:
+      -12px 0 0 #243447,
+      12px 0 0 #243447,
+      0 -5px 0 #66829a;
+  }
+
+  .pixel-figure {
+    border-width: 2px;
+    box-shadow:
+      0 -18px 0 -5px #f4c088,
+      -11px -4px 0 -5px #15151d,
+      11px -4px 0 -5px #15151d,
+      -5px 19px 0 -5px #15151d,
+      5px 19px 0 -5px #15151d;
+  }
+
+  .card-corner {
+    height: 8px;
+    width: 8px;
+  }
+
+  .event-card strong {
+    font-size: clamp(0.62rem, 3.7vw, 0.82rem);
+    line-height: 0.92;
+    text-shadow:
+      0 2px 0 #171717,
+      2px 0 0 #171717;
+  }
+
+  .event-meta,
+  .event-venue {
+    font-size: 0.42rem;
+    line-height: 1.12;
+    margin-top: 6px;
+  }
+
+  .event-description {
+    font-size: 0.5rem;
+    line-height: 1.22;
+    margin-top: 7px;
+  }
+
+  .event-actions {
+    gap: 5px;
+  }
+
+  .event-actions a,
+  .event-actions button {
+    border-width: 2px;
+    font-size: 0.44rem;
+    min-height: 24px;
+  }
+
+  .game-prompt {
+    border-width: 2px;
+    font-size: 0.52rem;
+    margin-top: 14px;
+    padding: 7px 10px;
   }
 }
 
