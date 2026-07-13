@@ -129,14 +129,12 @@ function EventCard({
           <span className="event-description">{event.description}</span>
           <span className="event-actions">
             <a href={event.instagram_url} target="_blank" rel="noreferrer">
+              <span className="ig-icon" aria-hidden="true" />
               View Instagram
             </a>
             <a href={event.registration_url} target="_blank" rel="noreferrer">
               Register Now
             </a>
-            <button type="button" onClick={onToggle}>
-              Flip Back
-            </button>
           </span>
         </div>
       </div>

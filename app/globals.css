@@ -482,14 +482,13 @@ button.event-face {
 
 .event-actions {
   display: grid;
-  gap: 8px;
+  gap: 12px;
   margin-top: auto;
   position: relative;
   z-index: 1;
 }
 
-.event-actions a,
-.event-actions button {
+.event-actions a {
   align-items: center;
   background: #e9e9df;
   border: 3px solid #2c2c2c;
@@ -498,24 +497,52 @@ button.event-face {
   cursor: pointer;
   display: flex;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.6rem;
+  font-size: 0.72rem;
   font-weight: 950;
+  gap: 8px;
   justify-content: center;
-  min-height: 34px;
+  min-height: 48px;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
 }
 
 .event-actions a:focus-visible,
-.event-actions a:hover,
-.event-actions button:focus-visible,
-.event-actions button:hover {
+.event-actions a:hover {
   background: #ffc640;
   box-shadow:
     inset -3px -3px 0 #9f621f,
     0 0 16px rgb(255 198 64 / 0.44);
   outline: 2px solid transparent;
+}
+
+.ig-icon {
+  border: 2px solid currentColor;
+  box-shadow: inset -2px -2px 0 rgb(0 0 0 / 0.18);
+  display: inline-block;
+  height: 16px;
+  position: relative;
+  width: 16px;
+}
+
+.ig-icon::before {
+  border: 2px solid currentColor;
+  content: "";
+  height: 6px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+  width: 6px;
+}
+
+.ig-icon::after {
+  background: currentColor;
+  content: "";
+  height: 3px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 3px;
 }
 
 .game-prompt {
@@ -686,14 +713,32 @@ button.event-face {
   }
 
   .event-actions {
-    gap: 5px;
+    gap: 7px;
   }
 
-  .event-actions a,
-  .event-actions button {
+  .event-actions a {
     border-width: 2px;
-    font-size: 0.44rem;
-    min-height: 24px;
+    font-size: 0.52rem;
+    gap: 5px;
+    min-height: 32px;
+  }
+
+  .ig-icon {
+    height: 12px;
+    width: 12px;
+  }
+
+  .ig-icon::before {
+    border-width: 1px;
+    height: 5px;
+    left: 3px;
+    top: 3px;
+    width: 5px;
+  }
+
+  .ig-icon::after {
+    height: 2px;
+    width: 2px;
   }
 
   .game-prompt {
