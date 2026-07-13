@@ -1,0 +1,89 @@
+{
+  "name": "Event",
+  "description": "Events shown on the Rave Destiny weekly selector.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Event title shown under the card."
+    },
+    "date": {
+      "type": "string",
+      "description": "Short event date/time label, for example Sat 23:59."
+    },
+    "venue": {
+      "type": "string",
+      "description": "Venue name shown on the card."
+    },
+    "genre": {
+      "type": "string",
+      "description": "Music genre label."
+    },
+    "tag": {
+      "type": "string",
+      "description": "Short promotional tag, for example Hidden Gem."
+    },
+    "description": {
+      "type": "string",
+      "description": "Short back-of-card event description."
+    },
+    "instagram_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Instagram page URL."
+    },
+    "registration_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Registration or ticket page URL."
+    },
+    "is_published": {
+      "type": "boolean",
+      "default": false,
+      "description": "Only published events appear on the public selector."
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 100,
+      "description": "Lower numbers appear first."
+    }
+  },
+  "required": [
+    "title",
+    "date",
+    "venue",
+    "genre",
+    "tag",
+    "instagram_url",
+    "registration_url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.is_published": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

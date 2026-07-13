@@ -1,12 +1,62 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
+import { base44 } from "./base44Client";
 import { weeklyEvents, type RaveEvent } from "./events";
+
+type Base44Event = {
+  id: string;
+  title?: string;
+  date?: string;
+  venue?: string;
+  genre?: string;
+  tag?: string;
+  description?: string;
+  instagram_url?: string;
+  registration_url?: string;
+  is_published?: boolean;
+  sort_order?: number;
+};
 
 export default function Home() {
   const [entered, setEntered] = useState(false);
   const [declined, setDeclined] = useState(false);
   const [flippedId, setFlippedId] = useState<string | null>(null);
+  const [events, setEvents] = useState<RaveEvent[]>(weeklyEvents);
+  const [eventSource, setEventSource] = useState<"base44" | "fallback">("fallback");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadEvents() {
+      try {
+        const records = (await base44.entities.Event.filter(
+          { is_published: true },
+          "sort_order",
+          4,
+          0
+        )) as Base44Event[];
+
+        const publishedEvents = records
+          .filter((event) => event.title && event.instagram_url && event.registration_url)
+          .map(toRaveEvent);
+
+        if (isMounted && publishedEvents.length > 0) {
+          setEvents(publishedEvents);
+          setEventSource("base44");
+        }
+      } catch (error) {
+        console.warn("Using fallback events because Base44 events could not load.", error);
+      }
+    }
+
+    loadEvents();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   function declineTonight() {
     setDeclined(true);
@@ -58,7 +108,7 @@ export default function Home() {
             </div>
 
             <div className="event-grid" aria-label="Weekly featured events">
-              {weeklyEvents.map((event) => (
+              {events.map((event) => (
                 <EventCard
                   event={event}
                   key={event.id}
@@ -69,12 +119,29 @@ export default function Home() {
                 />
               ))}
             </div>
-            <p className="game-prompt">Press Enter or tap a card to flip</p>
+            <p className="game-prompt">
+              {eventSource === "base44" ? "Live from Base44" : "Demo events"} / Press Enter
+              or tap a card to flip
+            </p>
           </section>
         )}
       </div>
     </main>
   );
+}
+
+function toRaveEvent(event: Base44Event): RaveEvent {
+  return {
+    id: event.id,
+    title: event.title ?? "Untitled Event",
+    date: event.date ?? "TBA",
+    venue: event.venue ?? "TBA",
+    genre: event.genre ?? "Electronic",
+    tag: event.tag ?? "Weekly Pick",
+    description: event.description ?? "Tap through for this week's party signal.",
+    instagram_url: event.instagram_url ?? "https://www.instagram.com/",
+    registration_url: event.registration_url ?? "https://kktix.com/",
+  };
 }
 
 function EventCard({
