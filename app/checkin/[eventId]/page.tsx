@@ -3,12 +3,19 @@
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
-import {
-  findHenduoRegistrations,
-  getEventFallback,
-  maskEmail,
-} from "../checkin-data";
-import type { CheckInSuccessPayload, HenduoRegistration } from "../checkin-data";
+import { getEventFallback } from "../checkin-data";
+import type { CheckInSuccessPayload } from "../checkin-data";
+
+type LookupMatch = {
+  id: string;
+  eventName: string;
+  eventDate: string;
+  venue: string;
+  maskedName: string;
+  maskedEmail: string;
+  ticketType: string;
+  totalCheckins: number;
+};
 
 const checkedInKey = (eventId: string) => `henduo_checked_in_${eventId}`;
 const successKey = (eventId: string) => `henduo_checkin_success_${eventId}`;
@@ -21,10 +28,10 @@ export default function HenduoCheckInPage() {
   const [lookup, setLookup] = useState("");
   const normalizedLookup = lookup.trim();
   const [message, setMessage] = useState("");
-  const [matches, setMatches] = useState<HenduoRegistration[]>([]);
+  const [matches, setMatches] = useState<LookupMatch[]>([]);
   const [loading, setLoading] = useState(false);
 
-  function completeCheckIn(registration: HenduoRegistration) {
+  function completeCheckIn(registration: LookupMatch) {
     const existingRaw = localStorage.getItem(checkedInKey(eventId));
     const checkedInIds: string[] = existingRaw ? JSON.parse(existingRaw) : [];
 
@@ -39,9 +46,9 @@ export default function HenduoCheckInPage() {
       eventName: registration.eventName,
       eventDate: registration.eventDate,
       venue: registration.venue,
-      attendeeName: registration.name,
+      attendeeName: registration.maskedName,
       ticketType: registration.ticketType,
-      totalCheckins: registration.totalCheckins + 1,
+      totalCheckins: registration.totalCheckins,
       checkinTime: new Date().toISOString(),
     };
 
@@ -50,26 +57,47 @@ export default function HenduoCheckInPage() {
     router.push(`/checkin-success/${eventId}`);
   }
 
-  function handleSubmit(formEvent: FormEvent<HTMLFormElement>) {
+  async function lookupRegistration(selectedRegistrationId = "") {
+    const response = await fetch(`/api/checkin/${eventId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        lookup: normalizedLookup,
+        selectedRegistrationId,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (result.status === "duplicate_name") {
+      setMessage("找到多筆同名資料，請選擇你的票券完成報到。");
+      setMatches(result.matches || []);
+      return;
+    }
+
+    if (!response.ok || !result.success) {
+      setMessage(result.message || "找不到報名資料，請洽現場工作人員協助。");
+      return;
+    }
+
+    completeCheckIn(result.registration);
+  }
+
+  async function handleSubmit(formEvent: FormEvent<HTMLFormElement>) {
     formEvent.preventDefault();
     setLoading(true);
     setMessage("");
     setMatches([]);
 
-    window.setTimeout(() => {
-      const found = findHenduoRegistrations(eventId, normalizedLookup);
-
-      if (found.length === 0) {
-        setMessage("找不到報名資料，請洽現場工作人員協助。");
-      } else if (!normalizedLookup.includes("@") && found.length > 1) {
-        setMessage("找到多筆同名資料，請選擇你的票券完成報到。");
-        setMatches(found);
-      } else {
-        completeCheckIn(found[0]);
-      }
-
+    try {
+      await lookupRegistration();
+    } catch {
+      setMessage("報到查詢失敗，請再試一次或洽現場工作人員。");
+    } finally {
       setLoading(false);
-    }, 260);
+    }
   }
 
   return (
@@ -141,13 +169,13 @@ export default function HenduoCheckInPage() {
                     <button
                       key={match.id}
                       type="button"
-                      onClick={() => completeCheckIn(match)}
+                      onClick={() => lookupRegistration(match.id)}
                       className="flex w-full items-center justify-between border border-white/12 bg-white/[0.06] px-4 py-3 text-left transition hover:bg-white/[0.1]"
                     >
                       <span>
-                        <span className="block text-sm font-semibold">{match.name}</span>
+                        <span className="block text-sm font-semibold">{match.maskedName}</span>
                         <span className="block text-xs text-white/48">
-                          {maskEmail(match.email)} / {match.ticketType}
+                          {match.maskedEmail} / {match.ticketType}
                         </span>
                       </span>
                       <span className="font-mono text-xs uppercase tracking-[0.12em] text-white/62">

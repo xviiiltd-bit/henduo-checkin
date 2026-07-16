@@ -1,15 +1,3 @@
-export type HenduoRegistration = {
-  id: string;
-  eventId: string;
-  eventName: string;
-  eventDate: string;
-  venue: string;
-  name: string;
-  email: string;
-  ticketType: string;
-  totalCheckins: number;
-};
-
 export type CheckInSuccessPayload = {
   eventId: string;
   eventName: string;
@@ -27,65 +15,14 @@ export type HenduoReward = {
   instruction: string;
 };
 
-export const HENDUO_DEFAULT_EVENT_ID = "henduo-music-demo";
+export const HENDUO_DEFAULT_EVENT_ID = "henduo-0718";
 
-export const henduoRegistrations: HenduoRegistration[] = [
-  {
-    id: "henduo-001",
-    eventId: HENDUO_DEFAULT_EVENT_ID,
-    eventName: "HENDUO MUSIC Check-in Night",
-    eventDate: "2026.07.18",
-    venue: "Taipei",
-    name: "Mica",
-    email: "mica@example.com",
-    ticketType: "Guest",
-    totalCheckins: 3,
-  },
-  {
-    id: "henduo-002",
-    eventId: HENDUO_DEFAULT_EVENT_ID,
-    eventName: "HENDUO MUSIC Check-in Night",
-    eventDate: "2026.07.18",
-    venue: "Taipei",
-    name: "陳威儒",
-    email: "weiru@example.com",
-    ticketType: "General",
-    totalCheckins: 1,
-  },
-  {
-    id: "henduo-003",
-    eventId: HENDUO_DEFAULT_EVENT_ID,
-    eventName: "HENDUO MUSIC Check-in Night",
-    eventDate: "2026.07.18",
-    venue: "Taipei",
-    name: "林冠廷",
-    email: "kuanting@example.com",
-    ticketType: "General",
-    totalCheckins: 2,
-  },
-  {
-    id: "henduo-004",
-    eventId: HENDUO_DEFAULT_EVENT_ID,
-    eventName: "HENDUO MUSIC Check-in Night",
-    eventDate: "2026.07.18",
-    venue: "Taipei",
-    name: "Lulu",
-    email: "lulu.one@example.com",
-    ticketType: "General",
-    totalCheckins: 1,
-  },
-  {
-    id: "henduo-005",
-    eventId: HENDUO_DEFAULT_EVENT_ID,
-    eventName: "HENDUO MUSIC Check-in Night",
-    eventDate: "2026.07.18",
-    venue: "Taipei",
-    name: "Lulu",
-    email: "lulu.two@example.com",
-    ticketType: "VIP",
-    totalCheckins: 4,
-  },
-];
+export const henduoEvent = {
+  eventId: HENDUO_DEFAULT_EVENT_ID,
+  eventName: "2026/07/18 舞廳復興 慢搖最高",
+  eventDate: "2026.07.18",
+  venue: "錦州街浪漫屋",
+};
 
 export const henduoSocialLinks = [
   {
@@ -112,49 +49,15 @@ export const henduoDemoReward: HenduoReward = {
   instruction: "請至吧台出示此畫面，即可兌換酒水一杯。",
 };
 
-export function findHenduoRegistrations(eventId: string, lookup: string) {
-  const normalizedLookup = lookup.trim().toLowerCase();
-  const eventRegistrations = henduoRegistrations.filter(
-    (registration) => registration.eventId === eventId,
-  );
-
-  if (!normalizedLookup) {
-    return [];
-  }
-
-  if (normalizedLookup.includes("@")) {
-    return eventRegistrations.filter(
-      (registration) => registration.email.toLowerCase() === normalizedLookup,
-    );
-  }
-
-  return eventRegistrations.filter(
-    (registration) => registration.name.trim().toLowerCase() === normalizedLookup,
-  );
-}
-
 export function getEventFallback(eventId: string) {
-  return (
-    henduoRegistrations.find((registration) => registration.eventId === eventId) ?? {
-      id: "fallback",
-      eventId,
-      eventName: "HENDUO MUSIC",
-      eventDate: "Event day",
-      venue: "Taipei",
-      name: "Guest",
-      email: "",
-      ticketType: "Guest",
-      totalCheckins: 1,
-    }
-  );
-}
-
-export function maskEmail(email: string) {
-  if (!email.includes("@")) {
-    return "No email";
+  if (eventId === HENDUO_DEFAULT_EVENT_ID) {
+    return henduoEvent;
   }
 
-  const [name, domain] = email.split("@");
-  const visible = name.slice(0, 2);
-  return `${visible}***@${domain}`;
+  return {
+    eventId,
+    eventName: "HENDUO MUSIC",
+    eventDate: "Event day",
+    venue: "Taipei",
+  };
 }
