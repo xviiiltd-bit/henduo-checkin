@@ -13,6 +13,8 @@ const SOCIALS = [
 ];
 
 const basePath = "/henduo-checkin";
+const successPath = "/success/";
+const rewardPath = "/reward/";
 const checkedInKey = `henduo_checked_in_${EVENT_ID}`;
 const successKey = `henduo_checkin_success_${EVENT_ID}`;
 const languageKey = "henduo_checkin_language";
@@ -31,6 +33,7 @@ const copy = {
     searchButton: "查詢 Search",
     divider: "或",
     help: "找不到報名資料？<br>請洽現場工作人員",
+    activeEventLabel: "目前活動資料",
     emptyLookup: "請輸入 Email 或中文姓名。",
     duplicateName: "找到多筆同名資料，請選擇你的票券完成報到。",
     notFound: "找不到報名資料，請洽現場工作人員協助。",
@@ -66,6 +69,7 @@ const copy = {
     searchButton: "Search",
     divider: "or",
     help: "Cannot find your registration?<br>Please contact event staff.",
+    activeEventLabel: "Current event data",
     emptyLookup: "Please enter your email or Chinese name.",
     duplicateName: "Multiple registrations were found. Please select your ticket.",
     notFound: "Registration not found. Please contact event staff.",
@@ -167,7 +171,7 @@ function renderCheckin() {
     <div class="divider">${text.divider}</div>
     <div class="help">
       <p>${text.help}</p>
-      <p class="mono">Event ID / ${EVENT_ID}</p>
+      <p class="mono">${text.activeEventLabel} / ${EVENT.eventDate}</p>
     </div>
   `, "input");
 
@@ -258,7 +262,7 @@ function completeCheckin(registration) {
   };
   localStorage.setItem(checkedInKey, JSON.stringify([...checkedInIds, registration.id]));
   sessionStorage.setItem(successKey, JSON.stringify(payload));
-  go(`/checkin-success/${EVENT_ID}/`);
+  go(successPath);
 }
 
 function renderSuccess() {
@@ -288,7 +292,7 @@ function renderSuccess() {
     <div class="social-grid">
       ${SOCIALS.map(([label, href]) => `<a class="social" href="${href}" target="_blank" rel="noreferrer">${label}</a>`).join("")}
     </div>
-    <a class="button" href="${appPath(`/reward/${EVENT_ID}/`)}">${text.drawButton}</a>
+    <a class="button" href="${appPath(rewardPath)}">${text.drawButton}</a>
     <button class="button" type="button" data-share-button>${text.shareButton}</button>
   `, "success");
   bindLanguageToggle(renderSuccess);
@@ -314,7 +318,7 @@ function renderReward() {
       <p>${text.redemptionInfo}</p>
     </div>
     <button class="button" type="button" data-share-button>${text.shareButton}</button>
-    <a class="button" href="${appPath(`/checkin-success/${EVENT_ID}/`)}">${text.viewReward}</a>
+    <a class="button" href="${appPath(successPath)}">${text.viewReward}</a>
   `, "reward");
   bindLanguageToggle(renderReward);
   bindShareButton();
