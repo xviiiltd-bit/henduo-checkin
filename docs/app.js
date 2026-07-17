@@ -15,6 +15,85 @@ const SOCIALS = [
 const basePath = "/henduo-checkin";
 const checkedInKey = `henduo_checked_in_${EVENT_ID}`;
 const successKey = `henduo_checkin_success_${EVENT_ID}`;
+const languageKey = "henduo_checkin_language";
+let currentLanguage = localStorage.getItem(languageKey) || "zh";
+
+const copy = {
+  zh: {
+    journey: "Check-in Journey",
+    systemTitle: "活動報到系統",
+    steps: ["01 掃碼進入", "02 輸入資訊", "03 報到成功", "04 抽獎結果"],
+    languageButton: "EN",
+    checkinTitle: "請輸入您的資訊",
+    emailTab: "電子郵件 Email",
+    nameTab: "中文姓名 Name",
+    lookupPlaceholder: "請輸入電子郵件或中文姓名",
+    searchButton: "查詢 Search",
+    divider: "或",
+    help: "找不到報名資料？<br>請洽現場工作人員",
+    emptyLookup: "請輸入 Email 或中文姓名。",
+    duplicateName: "找到多筆同名資料，請選擇你的票券完成報到。",
+    notFound: "找不到報名資料，請洽現場工作人員協助。",
+    alreadyCheckedIn: "你已經完成本場活動報到。",
+    successTitle: "報到成功！",
+    successSub: "Check-in Successful",
+    welcome: (name) => `Hi, ${name}`,
+    attendance: (count) => `歡迎回來！這是你第 ${count} 次參加我們的活動`,
+    currentEvent: "本次活動",
+    followUs: "關注我們 / Follow Us",
+    drawButton: "參加抽獎",
+    shareButton: "分享至限動",
+    shareAlert: "目前為展示版；正式版會產出可分享 IG 限動的圖片。",
+    luckyDraw: "Lucky Draw",
+    congrats: "恭喜你！",
+    congratsSub: "Congratulations!",
+    won: "你抽中了",
+    rewardName: "免費酒水兌換券",
+    rewardNameEn: "Free Drink Voucher",
+    redemption: "兌換說明 / Redemption Info",
+    redemptionInfo: "請至吧台出示此畫面，即可兌換酒水一杯。",
+    viewReward: "查看我的獎品",
+  },
+  en: {
+    journey: "Check-in Journey",
+    systemTitle: "Event Check-in System",
+    steps: ["01 Scan QR", "02 Enter Info", "03 Checked In", "04 Lucky Draw"],
+    languageButton: "中",
+    checkinTitle: "Enter your information",
+    emailTab: "Email",
+    nameTab: "Chinese Name",
+    lookupPlaceholder: "Enter your email or Chinese name",
+    searchButton: "Search",
+    divider: "or",
+    help: "Cannot find your registration?<br>Please contact event staff.",
+    emptyLookup: "Please enter your email or Chinese name.",
+    duplicateName: "Multiple registrations were found. Please select your ticket.",
+    notFound: "Registration not found. Please contact event staff.",
+    alreadyCheckedIn: "You have already checked in for this event.",
+    successTitle: "Checked in!",
+    successSub: "Check-in Successful",
+    welcome: (name) => `Hi, ${name}`,
+    attendance: (count) => `Welcome back. This is your ${count} event with us.`,
+    currentEvent: "Current Event",
+    followUs: "Follow Us",
+    drawButton: "Enter Lucky Draw",
+    shareButton: "Share to Story",
+    shareAlert: "Demo mode. The official version will generate an IG Story image.",
+    luckyDraw: "Lucky Draw",
+    congrats: "Congratulations!",
+    congratsSub: "You won a reward",
+    won: "You received",
+    rewardName: "Free Drink Voucher",
+    rewardNameEn: "Free Drink Voucher",
+    redemption: "Redemption Info",
+    redemptionInfo: "Show this screen at the bar to redeem one drink.",
+    viewReward: "View My Reward",
+  },
+};
+
+function t() {
+  return copy[currentLanguage];
+}
 
 function normalize(value) {
   return value.trim().toLowerCase();
@@ -37,21 +116,25 @@ function go(path) {
 }
 
 function phone(content, activeStep) {
+  const text = t();
   const steps = [
-    ["scan", "01 掃碼進入"],
-    ["input", "02 輸入資訊"],
-    ["success", "03 報到成功"],
-    ["reward", "04 抽獎結果"],
+    ["scan", text.steps[0]],
+    ["input", text.steps[1]],
+    ["success", text.steps[2]],
+    ["reward", text.steps[3]],
   ];
   return `
     <section class="shell">
       <header class="journey">
         <div class="brand-row">
           <div>
-            <p class="kicker">Check-in Journey</p>
-            <h1>活動報到系統</h1>
+            <p class="kicker">${text.journey}</p>
+            <h1>${text.systemTitle}</h1>
           </div>
-          <img class="brand-logo" src="${basePath}/henduo-duo-logo.png" alt="HENDUO MUSIC">
+          <div class="brand-actions">
+            <button class="language-toggle" type="button" data-language-toggle>${text.languageButton}</button>
+            <img class="brand-logo" src="${basePath}/henduo-duo-logo.png" alt="HENDUO MUSIC">
+          </div>
         </div>
         <div class="steps">
           ${steps.map(([id, label]) => `<div class="step ${id === activeStep ? "active" : ""}">${label}</div>`).join("")}
@@ -68,25 +151,27 @@ function phone(content, activeStep) {
 }
 
 function renderCheckin() {
+  const text = t();
   document.querySelector("#app").innerHTML = phone(`
     <div class="title">
       <p class="mono">Event Check-in</p>
-      <h2>請輸入您的資訊</h2>
+      <h2>${text.checkinTitle}</h2>
     </div>
     <form id="checkin-form">
-      <div class="tabs"><span>電子郵件 Email</span><span>中文姓名 Name</span></div>
-      <input id="lookup" class="input" autocomplete="email name" placeholder="請輸入電子郵件或中文姓名">
-      <button id="search" class="button" type="submit">查詢 Search</button>
+      <div class="tabs"><span>${text.emailTab}</span><span>${text.nameTab}</span></div>
+      <input id="lookup" class="input" autocomplete="email name" placeholder="${text.lookupPlaceholder}">
+      <button id="search" class="button" type="submit">${text.searchButton}</button>
       <div id="message"></div>
       <div id="matches"></div>
     </form>
-    <div class="divider">或</div>
+    <div class="divider">${text.divider}</div>
     <div class="help">
-      <p>找不到報名資料？<br>請洽現場工作人員</p>
+      <p>${text.help}</p>
       <p class="mono">Event ID / ${EVENT_ID}</p>
     </div>
   `, "input");
 
+  bindLanguageToggle(renderCheckin);
   const form = document.querySelector("#checkin-form");
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -103,7 +188,7 @@ async function lookupRegistration(selectedRegistrationId = "") {
   matchesNode.innerHTML = "";
 
   if (!lookup) {
-    message.innerHTML = `<div class="message">請輸入 Email 或中文姓名。</div>`;
+    message.innerHTML = `<div class="message">${t().emptyLookup}</div>`;
     return;
   }
 
@@ -136,7 +221,7 @@ async function lookupRegistration(selectedRegistrationId = "") {
   }
 
   if (matches.length > 1) {
-    message.innerHTML = `<div class="message">找到多筆同名資料，請選擇你的票券完成報到。</div>`;
+    message.innerHTML = `<div class="message">${t().duplicateName}</div>`;
     matchesNode.innerHTML = matches
       .map((match) => `
         <button class="match" type="button" data-id="${match.id}">
@@ -151,13 +236,13 @@ async function lookupRegistration(selectedRegistrationId = "") {
     return;
   }
 
-  message.innerHTML = `<div class="message">找不到報名資料，請洽現場工作人員協助。</div>`;
+  message.innerHTML = `<div class="message">${t().notFound}</div>`;
 }
 
 function completeCheckin(registration) {
   const checkedInIds = JSON.parse(localStorage.getItem(checkedInKey) || "[]");
   if (checkedInIds.includes(registration.id)) {
-    document.querySelector("#message").innerHTML = `<div class="message">你已經完成本場活動報到。</div>`;
+    document.querySelector("#message").innerHTML = `<div class="message">${t().alreadyCheckedIn}</div>`;
     return;
   }
 
@@ -177,6 +262,7 @@ function completeCheckin(registration) {
 }
 
 function renderSuccess() {
+  const text = t();
   const data = JSON.parse(sessionStorage.getItem(successKey) || "null") || {
     attendeeName: "Guest",
     totalCheckins: 1,
@@ -188,45 +274,66 @@ function renderSuccess() {
   document.querySelector("#app").innerHTML = phone(`
     <div class="check">✓</div>
     <div class="success-copy">
-      <h2>報到成功！</h2>
-      <p class="mono">Check-in Successful</p>
-      <p>Hi, ${data.attendeeName}</p>
-      <p>歡迎回來！這是你第 ${data.totalCheckins} 次參加我們的活動</p>
+      <h2>${text.successTitle}</h2>
+      <p class="mono">${text.successSub}</p>
+      <p>${text.welcome(data.attendeeName)}</p>
+      <p>${text.attendance(data.totalCheckins)}</p>
     </div>
     <div class="card">
-      <small>本次活動</small>
+      <small>${text.currentEvent}</small>
       <strong>${data.eventName}</strong>
       <p class="mono">${data.eventDate} / ${data.venue}</p>
     </div>
-    <p class="center mono" style="margin-top:24px;color:var(--text-muted);font-size:12px;">關注我們 / Follow Us</p>
+    <p class="center mono" style="margin-top:24px;color:var(--text-muted);font-size:12px;">${text.followUs}</p>
     <div class="social-grid">
       ${SOCIALS.map(([label, href]) => `<a class="social" href="${href}" target="_blank" rel="noreferrer">${label}</a>`).join("")}
     </div>
-    <a class="button" href="${appPath(`/reward/${EVENT_ID}/`)}">參加抽獎</a>
-    <button class="button" type="button" onclick="alert('目前為展示版；正式版會產出可分享 IG 限動的圖片。')">分享至限動</button>
+    <a class="button" href="${appPath(`/reward/${EVENT_ID}/`)}">${text.drawButton}</a>
+    <button class="button" type="button" data-share-button>${text.shareButton}</button>
   `, "success");
+  bindLanguageToggle(renderSuccess);
+  bindShareButton();
 }
 
 function renderReward() {
+  const text = t();
   document.querySelector("#app").innerHTML = phone(`
     <div class="title">
-      <p class="mono">Lucky Draw</p>
-      <h2>恭喜你！</h2>
-      <p class="mono">Congratulations!</p>
+      <p class="mono">${text.luckyDraw}</p>
+      <h2>${text.congrats}</h2>
+      <p class="mono">${text.congratsSub}</p>
     </div>
     <div class="ticket"><span class="ticket-icon">▽</span><span class="ticket-cut"></span></div>
     <div class="center" style="margin-top:28px;">
-      <p style="color:var(--text-muted);">你抽中了</p>
-      <h2>免費酒水兌換券</h2>
-      <p class="mono" style="color:var(--text-muted);">Free Drink Voucher</p>
+      <p style="color:var(--text-muted);">${text.won}</p>
+      <h2>${text.rewardName}</h2>
+      <p class="mono" style="color:var(--text-muted);">${text.rewardNameEn}</p>
     </div>
     <div class="card center">
-      <p class="mono">兌換說明 / Redemption Info</p>
-      <p>請至吧台出示此畫面，即可兌換酒水一杯。</p>
+      <p class="mono">${text.redemption}</p>
+      <p>${text.redemptionInfo}</p>
     </div>
-    <button class="button" type="button" onclick="alert('目前為展示版；正式版會產出可分享 IG 限動的圖片。')">分享至限動</button>
-    <a class="button" href="${appPath(`/checkin-success/${EVENT_ID}/`)}">查看我的獎品</a>
+    <button class="button" type="button" data-share-button>${text.shareButton}</button>
+    <a class="button" href="${appPath(`/checkin-success/${EVENT_ID}/`)}">${text.viewReward}</a>
   `, "reward");
+  bindLanguageToggle(renderReward);
+  bindShareButton();
+}
+
+function bindLanguageToggle(renderCurrentPage) {
+  const button = document.querySelector("[data-language-toggle]");
+  if (!button) return;
+  button.addEventListener("click", () => {
+    currentLanguage = currentLanguage === "zh" ? "en" : "zh";
+    localStorage.setItem(languageKey, currentLanguage);
+    renderCurrentPage();
+  });
+}
+
+function bindShareButton() {
+  document.querySelectorAll("[data-share-button]").forEach((button) => {
+    button.addEventListener("click", () => alert(t().shareAlert));
+  });
 }
 
 const path = window.location.pathname;

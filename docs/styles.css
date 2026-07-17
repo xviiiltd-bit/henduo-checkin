@@ -70,6 +70,32 @@ input {
   justify-content: space-between;
 }
 
+.brand-actions {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.language-toggle {
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  color: #fff;
+  cursor: pointer;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  height: 34px;
+  letter-spacing: 0.08em;
+  min-width: 42px;
+  padding: 0 10px;
+  text-transform: uppercase;
+}
+
+.language-toggle:hover {
+  background: #fff;
+  color: #000;
+}
+
 .kicker,
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
