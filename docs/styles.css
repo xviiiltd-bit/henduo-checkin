@@ -182,7 +182,7 @@ input {
 }
 
 .title {
-  margin-top: 44px;
+  margin-top: 24px;
   text-align: center;
 }
 
@@ -190,6 +190,10 @@ input {
   font-size: 28px;
   letter-spacing: 0.08em;
   margin: 10px 0 0;
+}
+
+.title h2:first-child {
+  margin-top: 0;
 }
 
 .title p {

@@ -158,7 +158,6 @@ function renderCheckin() {
   const text = t();
   document.querySelector("#app").innerHTML = phone(`
     <div class="title">
-      <p class="mono">Event Check-in</p>
       <h2>${text.checkinTitle}</h2>
     </div>
     <form id="checkin-form">
